@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Historial de Ventas</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style2.css') }}">
+</head>
+<body>
+<div id="v-sales-history" class="view active">
+  <h1>Historial de Ventas</h1>
+<nav>
+    <a href="/inventario2" class="logout-btn">Inventario</a>
+    <a href="/proveedores2" class="logout-btn">Proveedores</a>
+    <a href="/ventas2" class="logout-btn">Registrar Compra</a>
+    <a href="/registro_ventas2" class="logout-btn">Registro Ventas</a>
+    <a href="/estadisticas2" class="logout-btn">Estadísticas</a>
+    <a href="/cuenta" class="logout-btn">Cuenta</a>
+    {% if usuario %}
+      
+    {% endif %}
+  </nav>
+  <table border="1" cellpadding="5" cellspacing="0">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Fecha</th>
+        <th>Hora</th>
+        <th>Total</th>
+        <th>Usuario</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for venta in ventas %}
+      <tr>
+        <td>{{ venta.id_transaccion }}</td>
+        <td>{{ venta.fecha }}</td>
+        <td>{{ venta.hora }}</td>
+        <td>${{ "%.2f"|format(venta.total) }}</td>
+        <td>{{ venta.usuario }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+</body>
+</html>

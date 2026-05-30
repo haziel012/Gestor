@@ -1,0 +1,24 @@
+{% extends "index2.html" %}
+{% block content %}
+<h1>Proveedores</h1>
+<a href="/proveedor_form2" class="btn-agregar">Nuevo proveedor</a>
+<table>
+  <thead><tr><th>ID</th><th>Nombre</th><th>Número</th><th>Dirección</th><th>Correo</th><th>Tipo</th><th>Acciones</th></tr></thead>
+  <tbody>
+    {% for prov in proveedores %}
+    <tr>
+      <td>{{ prov.id_proveedor }}</td>
+      <td>{{ prov.nombre }}</td>
+      <td>{{ prov.numero }}</td>
+      <td>{{ prov.direccion }}</td>
+      <td>{{ prov.correo }}</td>
+      <td>{{ prov.tipo_proveedor }}</td>
+      <td>
+        <a href="/editar_proveedor2/{{ prov.id_proveedor }}">Editar</a>
+   <!-- <a href="/eliminar_proveedor2/{{ prov.id_proveedor }}"class="btn-eliminar" onclick="return confirm('¿Estás seguro de eliminar el proveedor {{ prov.nombre }}?')">Eliminar</a> -->
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

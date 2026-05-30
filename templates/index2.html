@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Sistema de Inventario 2</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style2.css') }}">
+</head>
+<body>
+
+  <!-- Barra de navegación -->
+  <nav>
+    <a href="/inventario2" class="logout-btn">Inventario</a>
+    <a href="/proveedores2" class="logout-btn">Proveedores</a>
+    <a href="/ventas2" class="logout-btn">Registrar Compra</a>
+    <a href="/registro_ventas2" class="logout-btn">Registro Ventas</a>
+    <a href="/estadisticas2" class="logout-btn">Estadísticas</a>
+    <a href="/cuenta" class="logout-btn">Cuenta</a>
+    {% if usuario %}
+      
+    {% endif %}
+  </nav>
+
+  <!-- Contenido dinámico -->
+  <main>
+    {% block content %}
+    {% endblock %}
+  </main>
+
+</body>
+</html>

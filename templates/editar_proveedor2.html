@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Proveedor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style2.css') }}">
+</head>
+<body>
+<h1>Editar Proveedor</h1>
+<form action="/actualizar_proveedor2" method="POST">
+  <input type="hidden" name="id_proveedor" value="{{ proveedor.id_proveedor }}">
+  <label>Nombre</label>
+  <input type="text" name="nombre" value="{{ proveedor.nombre }}">
+  <label>Número</label>
+  <input type="text" name="numero" value="{{ proveedor.numero }}">
+  <label>Dirección</label>
+  <input type="text" name="direccion" value="{{ proveedor.direccion }}">
+  <label>Tipo de Proveedor</label>
+  <input type="text" name="tipo_proveedor" value="{{ proveedor.tipo_proveedor }}">
+  <label>Correo</label>
+  <input type="email" name="correo" value="{{ proveedor.correo }}">
+  <button type="submit">Guardar Cambios</button>
+  <a href="/inventario2" class="btn-eliminar">Cancelar</a>
+</form>
+</body>
+</html>
+

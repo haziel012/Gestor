@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Estadísticas</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style2.css') }}">
+</head>
+<body>
+<div id="v-stats2" class="view active">  <nav>
+    <a href="/inventario2" class="logout-btn">Inventario</a>
+    <a href="/proveedores2" class="logout-btn">Proveedores</a>
+    <a href="/ventas2" class="logout-btn">Registrar Compra</a>
+    <a href="/registro_ventas2" class="logout-btn">Registro Ventas</a>
+    <a href="/estadisticas2" class="logout-btn">Estadísticas</a>
+    <a href="/cuenta" class="logout-btn">Cuenta</a>
+    {% if usuario %}
+    
+    {% endif %}
+  </nav>
+  <h1>📊 Estadísticas del Sistema</h1>
+  <table border="1" cellpadding="8" cellspacing="0">
+    <thead>
+      <tr>
+        <th>Indicador</th>
+        <th>Valor</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Ventas registradas</td>
+        <td>{{ total_ventas }}</td>
+      </tr>
+      <tr>
+        <td>Ingresos totales</td>
+        <td>${{ "%.2f"|format(ingresos) }}</td>
+      </tr>
+      <tr>
+        <td>Producto más vendido</td>
+        <td>
+          {% if producto_top %}
+            {{ producto_top.nombre }} ({{ producto_top.cantidad }})
+          {% else %}
+            Ninguno
+          {% endif %}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>

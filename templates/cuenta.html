@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Mi Cuenta</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="contenedor">
+    <div class="formulario">
+        <h1>Mi Cuenta</h1>
+
+        <label>Nombre</label>
+        <input type="text" value="{{ usuario.nombre }}" readonly>
+
+        <label>Apellido Paterno</label>
+        <input type="text" value="{{ usuario.apellido_p }}" readonly>
+
+        <label>Apellido Materno</label>
+        <input type="text" value="{{ usuario.apellido_m }}" readonly>
+
+        <label>Teléfono</label>
+        <input type="text" value="{{ usuario.telefono }}" readonly>
+
+        <label>Correo</label>
+        <input type="email" value="{{ usuario.correo }}" readonly>
+
+        <label>Contraseña</label>
+        <input type="password" value="{{ usuario.contrasena }}" readonly>
+
+        <div style="margin-top:20px;">
+            <a href="/logout2" class="btn-eliminar">Cerrar Sesión</a>
+            <a href="/inventario2" class="btn-agregar">Volver al Inventario</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+
+

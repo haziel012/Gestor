@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registrar Compra</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style2.css') }}">
+</head>
+<body>
+<div id="v-sale2" class="view active">
+  <h1>Registrar Compra</h1>
+  <form action="/guardar_compra2" method="POST" onsubmit="return validarPago()">
+    <label>Fecha</label>
+    <input type="date" name="fecha" required>
+    <table>
+      <thead>
+        <tr>
+          <th>Clave</th>
+          <th>Nombre</th>
+          <th>Precio</th>
+          <th>Cantidad</th>
+          <th>Subtotal</th>
+        </tr>
+      </thead>
+      <tbody id="sale-items">
+        <tr>
+          <td>
+          <input type="text" name="producto[]" class="prod-clave" 
+           placeholder="Código producto" onblur="buscarProducto(this)">
+          </td>
+          <td><span class="prod-nombre"></span></td>
+          <td><input type="number" class="prod-precio" value="0" readonly></td>
+          <td><input type="number" name="cantidad[]" value="1" min="1" 
+                     oninput="calcularSubtotal(this)">
+          <!-- campo oculto para stock -->
+              <input type="hidden" class="prod-stock" value="0">
+          </td>
+          <td><input type="text" class="prod-subtotal" readonly></td>
+</tr>
+      </tbody>
+    </table>
+    <button type="button" onclick="addSaleRow()">+ Agregar producto</button>
+    <h3>Total: $<span id="sale-total">0.00</span></h3>
+    <label>Monto de pago</label>
+    <input type="number" id="sale-payment" name="pago" step="0.01" min="0" required>
+    <h3>Cambio: $<span id="sale-change">0.00</span></h3>
+    <button type="submit">Registrar compra</button>
+    <a href="/inventario2" class="btn-eliminar">Cancelar</a>  </form>
+</div>
+<script>
+function buscarProducto(input) {
+  const codigo = input.value;
+  if (!codigo) return;
+
+  fetch("/buscar_producto2", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({codigo: codigo})
+  })
+  .then(res => res.json())
+  .then(data => {
+    const row = input.closest("tr");
+    if (data.success) {
+      row.querySelector(".prod-nombre").innerText = data.producto.nombre;
+      row.querySelector(".prod-precio").value = data.producto.precio;
+      row.querySelector(".prod-stock").value = data.producto.stock; // guardar stock
+      calcularSubtotal(row.querySelector("input[name='cantidad[]']"));
+    } else {
+      alert(data.mensaje);
+      row.querySelector(".prod-nombre").innerText = "";
+      row.querySelector(".prod-precio").value = 0;
+      row.querySelector(".prod-stock").value = 0;
+      row.querySelector(".prod-subtotal").value = "";
+      calcularTotal();
+    }
+  });
+}
+function addSaleRow() {
+  const tbody = document.getElementById("sale-items");
+  const row = tbody.rows[0].cloneNode(true);
+
+  // limpiar valores de la nueva fila
+  row.querySelector(".prod-clave").value = "";
+  row.querySelector(".prod-nombre").innerText = "";
+  row.querySelector(".prod-precio").value = 0;
+  row.querySelector("input[name='cantidad[]']").value = 1;
+  row.querySelector(".prod-subtotal").value = "";
+  row.querySelector(".prod-stock").value = 0;
+
+  tbody.appendChild(row);
+}
+
+function calcularSubtotal(input) {
+  const row = input.closest("tr");
+  const precio = parseFloat(row.querySelector(".prod-precio").value) || 0;
+  const cantidad = parseInt(input.value) || 0;
+  const stock = parseInt(row.querySelector(".prod-stock").value) || 0;
+  // validar stock
+  if (cantidad > stock) {
+    alert(`⚠️ Stock insuficiente. Disponible: ${stock}`);
+    input.value = stock; // ajustar cantidad al máximo permitido
+  }
+  const subtotal = precio * parseInt(input.value);
+  row.querySelector(".prod-subtotal").value = subtotal.toFixed(2);
+  calcularTotal();
+}
+function calcularTotal() {
+  let total = 0;
+  document.querySelectorAll(".prod-subtotal").forEach(el => {
+    total += parseFloat(el.value) || 0;
+  });
+  document.getElementById("sale-total").innerText = total.toFixed(2);
+  calcularCambio();
+}
+function calcularCambio() {
+  const total = parseFloat(document.getElementById("sale-total").innerText);
+  const pago = parseFloat(document.getElementById("sale-payment").value);
+  if (!isNaN(pago)) {
+    const cambio = pago - total;
+    document.getElementById("sale-change").innerText = cambio.toFixed(2);
+  }
+}
+document.getElementById("sale-payment").addEventListener("input", calcularCambio);
+</script>
+</body>
+</html>

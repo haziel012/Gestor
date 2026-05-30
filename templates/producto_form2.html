@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Nuevo Producto</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style2.css') }}">
+</head>
+<body>
+<div class="contenedor">
+    <div class="formulario">
+        <h1>Nuevo Producto</h1>
+        <form action="/guardar_producto2" method="POST">
+            <label>Clave</label>
+            <input type="text" name="clave" required>
+
+            <label>Nombre</label>
+            <input type="text" name="nombre" required>
+
+            <label>Stock</label>
+            <input type="number" name="stock" required>
+
+            <label>Contenido</label>
+            <input type="text" name="contenido">
+
+            <label>Precio</label>
+            <input type="number" step="0.01" name="precio" required>
+
+            <label>Proveedor</label>
+            <select name="proveedor">
+                {% for p in proveedores %}
+                <option value="{{ p.id_proveedor }}">{{ p.nombre }}</option>
+                {% endfor %}
+            </select>
+
+            <button type="submit" class="btn-agregar">Guardar</button>
+            <a href="/inventario2" class="btn-eliminar">Cancelar</a>
+        </form>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,41 @@
+{% extends "index2.html" %}
+{% block content %}
+{% if usuario %}
+<div id="v-inventory2" class="view active">
+  <h1>Inventario</h1>
+
+  <!-- Bloque superior con botón -->
+  <div class="top-actions">
+    <a href="/nuevo_producto2" class="btn-agregar">+ Nuevo producto</a>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Código</th><th>Nombre</th><th>Contenido</th>
+        <th>Precio</th><th>Stock</th><th>Proveedor</th><th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for producto in productos %}
+      <tr>
+        <td>{{ producto.clave }}</td>
+        <td>{{ producto.nombre }}</td>
+        <td>{{ producto.contenido }}</td>
+        <td>${{ producto.precio }}</td>
+        <td>{{ producto.stock }}</td>
+        <td>{{ producto.id_proveedor }}</td>
+        <td>
+          <a href="/editar_producto2/{{ producto.clave }}">Editar</a>
+          <!-- Comentado el botón eliminar -->
+          <!-- <a href="/eliminar_producto2/{{ producto.clave }}" class="btn-eliminar" onclick="return confirm('¿Estás seguro de eliminar el producto {{ producto.nombre }}?')">Eliminar</a> -->
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+  <p>No has iniciado sesión. <a href="/">Ir al login</a></p>
+{% endif %}
+{% endblock %}
