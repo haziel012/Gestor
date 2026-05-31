@@ -23,19 +23,15 @@ def login():
 def validar_login():
     correo = request.form.get("correo")
     password = request.form.get("password")
-
-    con = conexion()
-    cursor = con.cursor(dictionary=True, buffered=True)
-
-    cursor.execute(
-        "SELECT * FROM personal WHERE correo=%s AND contrasena=%s",
-        (correo, password)
-    )
-
-    usuario = cursor.fetchone()
-
-    cursor.close()
-    con.close()
+   con = conexion()
+cursor = con.cursor(dictionary=True, buffered=True)
+cursor.execute(
+    "SELECT * FROM personal WHERE correo=%s AND contrasena=%s",
+    (correo, password)
+)
+usuario = cursor.fetchone()
+cursor.close()
+con.close()
 
     if usuario:
         session["usuario"] = usuario
