@@ -4,13 +4,15 @@ import json
 import os
 app = Flask(__name__)
 
-db_conf = {
-    "host": os.getenv("mysql-a5b4356-hazielmoyacruz-33df.l.aivencloud.com"),
-    "port": int(os.getenv(19103)),
-    "user": os.getenv("avnadmin"),
-    "password": os.getenv("AVNS_KCvM9coBZ6aL7GMQ6sX"),
-    "database": os.getenv("inventario")
-}
+def conexion():
+    return mysql.connector.connect(
+        host="mysql-a5b4356-hazielmoyacruz-33df.l.aivencloud.com",
+        port=19103,
+        user="avnadmin",
+        password="AVNS_KCvM9coBZ6aL7GMQ6sX",
+        database="inventario",  
+        ssl_disabled=False
+    )
 def conexion():
     return mysql.connector.connect(**db_conf)
 # LOGIN
