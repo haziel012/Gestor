@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 db_conf = {
     "host": os.getenv("mysql-a5b4356-hazielmoyacruz-33df.l.aivencloud.com"),
-    "port": int(os.getenv("19103")),
+    "port": int(os.getenv(19103)),
     "user": os.getenv("avnadmin"),
     "password": os.getenv("AVNS_KCvM9coBZ6aL7GMQ6sX"),
     "database": os.getenv("inventario")
