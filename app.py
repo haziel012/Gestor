@@ -1,13 +1,15 @@
 from flask import Flask, render_template, request, jsonify, redirect, session
 import mysql.connector
 import json
+import os
 app = Flask(__name__)
-app.secret_key = "clave-secreta"
+
 db_conf = {
-    'host': 'localhost',
-    'user': 'root',
-    'password': '1234',
-    'database': 'inventario'
+    "host": os.getenv("mysql-a5b4356-hazielmoyacruz-33df.l.aivencloud.com"),
+    "port": int(os.getenv("19103")),
+    "user": os.getenv("avnadmin"),
+    "password": os.getenv("AVNS_KCvM9coBZ6aL7GMQ6sX"),
+    "database": os.getenv("inventario")
 }
 def conexion():
     return mysql.connector.connect(**db_conf)
