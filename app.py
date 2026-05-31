@@ -25,14 +25,20 @@ def validar_login():
     password = request.form.get("password")
 
     con = conexion()
-    cursor = con.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM personal WHERE correo=%s AND contrasena=%s", (correo, password))
+    cursor = con.cursor(dictionary=True, buffered=True)
+
+    cursor.execute(
+        "SELECT * FROM personal WHERE correo=%s AND contrasena=%s",
+        (correo, password)
+    )
+
     usuario = cursor.fetchone()
+
     cursor.close()
     con.close()
 
     if usuario:
-        session["usuario"] = usuario  # guarda todo el dict del usuario
+        session["usuario"] = usuario
         return redirect("/inventario2")
     else:
         return render_template("login2.html", error="Correo o contraseña incorrectos")
