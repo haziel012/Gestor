@@ -13,8 +13,7 @@ def conexion():
         database="inventario",  
         ssl_disabled=False
     )
-def conexion():
-    return mysql.connector.connect(**db_conf)
+
 # LOGIN
 @app.route("/")
 def login():
