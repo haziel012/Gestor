@@ -23,11 +23,11 @@ def login():
 def validar_login():
     correo = request.form.get("correo")
     password = request.form.get("password")
-   con = conexion()
-cursor = con.cursor(dictionary=True, buffered=True)
-cursor.execute(
-    "SELECT * FROM personal WHERE correo=%s AND contrasena=%s",
-    (correo, password)
+    con = conexion()
+    cursor = con.cursor(dictionary=True, buffered=True)
+    cursor.execute(
+        "SELECT * FROM personal WHERE correo=%s AND contrasena=%s",
+        (correo, password)
 )
 usuario = cursor.fetchone()
 cursor.close()
@@ -354,8 +354,8 @@ def guardar_compra2():
     cursor.execute("""
         INSERT INTO transacciones (fecha, hora, total, id_personal)
         VALUES (%s, %s, %s, %s)
-    """, (fecha, hora, total, usuario["id_personal"]))
-    id_transaccion = cursor.lastrowid
+        """, (fecha, hora, total, usuario["id_personal"]))
+        id_transaccion = cursor.lastrowid
 
     # insertar detalle_venta y actualizar stock
     for i in range(len(productos)):
