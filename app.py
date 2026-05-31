@@ -2,22 +2,29 @@ from flask import Flask, render_template, request, jsonify, redirect, session
 import mysql.connector
 import json
 import os
+from datetime import datetime
+
 app = Flask(__name__)
+app.secret_key = os.environ.get("SECRET_KEY", "cambia_esta_clave_en_produccion")
+
 
 def conexion():
     return mysql.connector.connect(
-        host="mysql-a5b4356-hazielmoyacruz-33df.l.aivencloud.com",
-        port=19103,
-        user="avnadmin",
-        password="AVNS_KCvM9coBZ6aL7GMQ6sX",
-        database="inventario",  
+        host=os.environ.get("DB_HOST", "mysql-a5b4356-hazielmoyacruz-33df.l.aivencloud.com"),
+        port=int(os.environ.get("DB_PORT", 19103)),
+        user=os.environ.get("DB_USER", "avnadmin"),
+        password=os.environ.get("DB_PASS", "AVNS_KCvM9coBZ6aL7GMQ6sX"),
+        database=os.environ.get("DB_NAME", "inventario"),
         ssl_disabled=False
     )
+
 
 # LOGIN
 @app.route("/")
 def login():
     return render_template("login2.html")
+
+
 # VALIDAR LOGIN
 @app.route("/login2", methods=["POST"])
 def validar_login():
@@ -28,10 +35,11 @@ def validar_login():
     cursor.execute(
         "SELECT * FROM personal WHERE correo=%s AND contrasena=%s",
         (correo, password)
-)
-usuario = cursor.fetchone()
-cursor.close()
-con.close()
+    )
+   
+    usuario = cursor.fetchone()
+    cursor.close()
+    con.close()
 
     if usuario:
         session["usuario"] = usuario
@@ -52,6 +60,8 @@ def cuenta():
 @app.route("/registro2")
 def registro():
     return render_template("registro2.html")
+
+
 # GUARDAR USUARIO
 @app.route("/guardar_usuario2", methods=["POST"])
 def guardar_usuario():
@@ -73,25 +83,26 @@ def guardar_usuario():
     cursor.close()
     con.close()
     return redirect("/")
+
+
 @app.route("/logout2")
 def logout():
     session.pop("usuario", None)
     return redirect("/")
+
+
 # INVENTARIO
 @app.route("/inventario2")
 def inventario():
     usuario = session.get("usuario")
     if not usuario:
-        return redirect("/")  # si no hay sesión, vuelve al login
+        return redirect("/")
     con = conexion()
     cursor = con.cursor(dictionary=True)
-    # Productos
     cursor.execute("SELECT * FROM productos")
     productos = cursor.fetchall()
-    # Proveedores
     cursor.execute("SELECT * FROM proveedores")
     proveedores = cursor.fetchall()
-    # Estadísticas
     cursor.execute("SELECT COUNT(*) AS total_registros FROM productos")
     total_registros = cursor.fetchone()["total_registros"]
     cursor.execute("SELECT SUM(total) AS total_ventas FROM ventas")
@@ -110,6 +121,7 @@ def inventario():
         productos_vendidos=productos_vendidos
     )
 
+
 # PRODUCTOS CRUD
 @app.route("/productos2")
 def productos():
@@ -126,6 +138,7 @@ def productos():
     con.close()
     return render_template("productos2.html", productos=productos)
 
+
 @app.route("/nuevo_producto2")
 def nuevo_producto2():
     con = conexion()
@@ -134,7 +147,6 @@ def nuevo_producto2():
     proveedores = cursor.fetchall()
     cursor.close()
     con.close()
-    # 🔹 Aquí cambias el nombre de la plantilla
     return render_template("producto_form2.html", proveedores=proveedores)
 
 
@@ -146,7 +158,6 @@ def guardar_producto2():
     contenido = request.form["contenido"]
     precio = request.form["precio"]
     proveedor = request.form["proveedor"]
-
     con = conexion()
     cursor = con.cursor()
     sql = "INSERT INTO productos (clave, nombre, stock, contenido, precio, id_proveedor) VALUES (%s,%s,%s,%s,%s,%s)"
@@ -155,6 +166,7 @@ def guardar_producto2():
     cursor.close()
     con.close()
     return redirect("/inventario2")
+
 
 @app.route("/editar_producto2/<int:clave>")
 def editar_producto(clave):
@@ -167,6 +179,7 @@ def editar_producto(clave):
     cursor.close()
     con.close()
     return render_template("editar_producto2.html", producto=producto, proveedores=proveedores)
+
 
 @app.route("/actualizar_producto2", methods=["POST"])
 def actualizar_producto2():
@@ -187,8 +200,8 @@ def actualizar_producto2():
     con.commit()
     cursor.close()
     con.close()
-    # 🔹 Aquí rediriges a inventario2
     return redirect("/inventario2")
+
 
 @app.route("/eliminar_producto2/<int:clave>")
 def eliminar_producto2(clave):
@@ -199,6 +212,7 @@ def eliminar_producto2(clave):
     cursor.close()
     con.close()
     return redirect("/inventario2")
+
 
 # PROVEEDORES CRUD
 @app.route("/proveedores2")
@@ -211,9 +225,11 @@ def proveedores():
     con.close()
     return render_template("proveedores2.html", proveedores=proveedores)
 
+
 @app.route("/proveedor_form2")
 def proveedor_form():
     return render_template("proveedor_form2.html")
+
 
 @app.route("/guardar_proveedor2", methods=["POST"])
 def guardar_proveedor():
@@ -234,6 +250,7 @@ def guardar_proveedor():
     con.close()
     return redirect("/proveedores2")
 
+
 @app.route("/editar_proveedor2/<int:id>")
 def editar_proveedor(id):
     con = conexion()
@@ -244,6 +261,7 @@ def editar_proveedor(id):
     cursor.close()
     con.close()
     return render_template("editar_proveedor2.html", proveedor=proveedor)
+
 
 @app.route("/actualizar_proveedor2", methods=["POST"])
 def actualizar_proveedor():
@@ -266,6 +284,7 @@ def actualizar_proveedor():
     con.close()
     return redirect("/proveedores2")
 
+
 @app.route("/eliminar_proveedor2/<int:id_proveedor>")
 def eliminar_proveedor(id_proveedor):
     con = conexion()
@@ -276,6 +295,7 @@ def eliminar_proveedor(id_proveedor):
     cursor.close()
     con.close()
     return redirect("/proveedores2")
+
 
 # VENTAS
 @app.route("/ventas2")
@@ -291,7 +311,7 @@ def ventas():
     return render_template("venta_form2.html", productos=productos, productos_json=productos_json)
 
 
-# Buscar producto por clave (AJAX)
+
 @app.route("/buscar_producto2", methods=["POST"])
 def buscar_producto2():
     data = request.get_json()
@@ -307,8 +327,6 @@ def buscar_producto2():
     return jsonify({"success": False, "mensaje": "Producto no encontrado"})
 
 
-from datetime import datetime
-
 @app.route("/guardar_compra2", methods=["POST"])
 def guardar_compra2():
     fecha = request.form["fecha"]
@@ -323,7 +341,6 @@ def guardar_compra2():
     total = 0
     subtotales = []
 
-    # calcular subtotales y validar stock
     for i in range(len(productos)):
         cursor.execute("SELECT precio, stock FROM productos WHERE clave = %s", (productos[i],))
         producto = cursor.fetchone()
@@ -332,7 +349,6 @@ def guardar_compra2():
             stock_actual = producto["stock"]
             cantidad = int(cantidades[i])
 
-            # validar stock
             if cantidad > stock_actual:
                 cursor.close()
                 con.close()
@@ -342,22 +358,20 @@ def guardar_compra2():
             subtotales.append(subtotal)
             total += subtotal
 
-    # validar pago
     if pago < total:
         cursor.close()
         con.close()
         return "<script>alert('⚠️ Pago insuficiente. Debe cubrir al menos el total.'); window.location.href='/ventas2';</script>"
 
-    # insertar en transacciones
     hora = datetime.now().strftime("%H:%M:%S")
     cursor = con.cursor()
     cursor.execute("""
         INSERT INTO transacciones (fecha, hora, total, id_personal)
         VALUES (%s, %s, %s, %s)
-        """, (fecha, hora, total, usuario["id_personal"]))
-        id_transaccion = cursor.lastrowid
+    """, (fecha, hora, total, usuario["id_personal"]))
+    
+    id_transaccion = cursor.lastrowid
 
-    # insertar detalle_venta y actualizar stock
     for i in range(len(productos)):
         cursor.execute("""
             INSERT INTO detalle_venta (id_transaccion, clave_producto, cantidad, subtotal)
@@ -375,11 +389,11 @@ def guardar_compra2():
     cambio = pago - total
     return f"<script>alert('✅ Compra registrada. Cambio: ${cambio:.2f}'); window.location.href='/inventario2';</script>"
 
+
 @app.route("/registro_ventas2")
 def registro_ventas2():
     con = conexion()
     cursor = con.cursor(dictionary=True)
-    # Traemos las transacciones junto con el nombre del usuario
     cursor.execute("""
         SELECT t.id_transaccion, t.fecha, t.hora, t.total, p.nombre AS usuario
         FROM transacciones t
@@ -391,18 +405,16 @@ def registro_ventas2():
     con.close()
     return render_template("registro_ventas2.html", ventas=ventas)
 
+
 # ESTADÍSTICAS
 @app.route("/estadisticas2")
 def estadisticas2():
     con = conexion()
     cursor = con.cursor(dictionary=True)
-    # Total de ventas registradas
     cursor.execute("SELECT COUNT(*) AS total_ventas FROM transacciones")
     total_ventas = cursor.fetchone()["total_ventas"]
-    # Suma total de ingresos
     cursor.execute("SELECT SUM(total) AS ingresos FROM transacciones")
     ingresos = cursor.fetchone()["ingresos"] or 0
-    # Producto más vendido
     cursor.execute("""
         SELECT p.nombre, SUM(d.cantidad) AS cantidad
         FROM detalle_venta d
@@ -419,22 +431,7 @@ def estadisticas2():
                            ingresos=ingresos,
                            producto_top=producto_top)
 
-# BUSCAR PRODUCTO (AJAX)
-@app.route("/buscar_producto2", methods=["POST"])
-def buscar_producto():
-    data = request.get_json()
-    codigo = data.get("codigo", "").upper()
-    con = conexion()
-    cursor = con.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM productos WHERE clave = %s", (codigo,))
-    producto = cursor.fetchone()
-    cursor.close()
-    con.close()
-    if producto:
-        return jsonify({"success": True, "producto": producto})
-    return jsonify({"success": False, "mensaje": "Producto no encontrado"})
 
 if __name__ == "__main__":
-    import os
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
