@@ -12,6 +12,7 @@ body {
   margin: 0;
   background: #0f1117; /* oscuro */
   color: white;
+}
 .contenedor {
   display: flex;
   justify-content: center;   /* centra horizontal */
