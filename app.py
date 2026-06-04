@@ -340,7 +340,7 @@ def ventas():
     con.close()
     productos_dict = {p["clave"]: p["precio"] for p in productos}
     productos_json = json.dumps(productos_dict)
-    return render_template("venta_form2.html", productos=productos, productos_json=productos_json)
+    return render_template("ventas2.html", productos=productos, productos_json=productos_json)
 
 
 
