@@ -158,13 +158,45 @@ def guardar_producto2():
     contenido = request.form["contenido"]
     precio = request.form["precio"]
     proveedor = request.form["proveedor"]
+
     con = conexion()
+    cursor = con.cursor(dictionary=True)
+
+    # Verificar si la clave ya existe
+    cursor.execute(
+        "SELECT clave FROM productos WHERE clave = %s",
+        (clave,)
+    )
+    existe = cursor.fetchone()
+
+    if existe:
+        cursor.execute("SELECT * FROM proveedores")
+        proveedores = cursor.fetchall()
+        cursor.close()
+        con.close()
+
+        return render_template(
+            "producto_form2.html",
+            proveedores=proveedores,
+            error="Esta clave ya está en uso"
+        )
+
+    # Guardar producto
     cursor = con.cursor()
-    sql = "INSERT INTO productos (clave, nombre, stock, contenido, precio, id_proveedor) VALUES (%s,%s,%s,%s,%s,%s)"
-    cursor.execute(sql, (clave, nombre, stock, contenido, precio, proveedor))
+    sql = """
+    INSERT INTO productos
+    (clave, nombre, stock, contenido, precio, id_proveedor)
+    VALUES (%s,%s,%s,%s,%s,%s)
+    """
+    cursor.execute(
+        sql,
+        (clave, nombre, stock, contenido, precio, proveedor)
+    )
+
     con.commit()
     cursor.close()
     con.close()
+
     return redirect("/inventario2")
 
 
